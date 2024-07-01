@@ -4,14 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NRCC Messages</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@600&display=swap" rel="stylesheet">
     <style>
-        @font-face {
-            font-family: 'NewBrunel';
-            src: url('https://raw.githubusercontent.com/MichaelH12345/fonts/main/NewBrunel-Regular.otf') format('opentype');
-            font-weight: normal;
-            font-style: normal;
-        }
-        
+  
         body, html {
             margin: 0;
             padding: 0;
@@ -21,13 +18,13 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-image: url('https://raw.githubusercontent.com/MichaelH12345/fonts/main/Info1.png');
+            background-image: url('https://raw.githubusercontent.com/MichaelH12345/fonts/main/Info2.png');
             background-size: cover;
             background-position: center;
         }
         .message-box {
             position: absolute;
-            font-family: 'NewBrunel', sans-serif;
+            font-family: 'Noto Sans', sans-serif;
             color: white;
             font-size: 125px;
             width: 3000px;
@@ -36,13 +33,13 @@
             overflow: hidden;
             cursor: pointer;
             top: 50%;
-            right: 0;
-            transform: translate(50%, -50%);
+            left: 0;
+            transform: translate(-50%, -50%);
         }
 
         .station-box {
             position: absolute;
-            font-family: 'NewBrunel', sans-serif;
+            font-family: 'Noto Sans', sans-serif;
             color: white;
             font-size: 100px;
             width: 3000px;
@@ -51,9 +48,10 @@
             overflow: hidden;
             cursor: pointer;
             top: 10%;
-            right: 0%;
-            transform: translateX(50%);
+            left: 0%;
+            transform: translateX(-50%);
         }
+
         .edit-area {
             position: absolute;
             top: 0;
