@@ -51,16 +51,16 @@
             transform: translateX(50.25%);
         }
         .time-box {
-    position: absolute;
-    font-family: 'Noto Sans', sans-serif;
-    color: white;
-    font-size: 75px;
-    padding: 20px;
-    text-align: center;
-    cursor: default;
-    bottom: 75px; /* 50 pixels from the bottom */
-    left: 100px; /* 50 pixels from the right */
-}
+            position: absolute;
+            font-family: 'Noto Sans', sans-serif;
+            color: white;
+            font-size: 75px;
+            padding: 20px;
+            text-align: center;
+            cursor: default;
+            bottom: 75px; /* 50 pixels from the bottom */
+            left: 100px; /* 50 pixels from the right */
+        }
         .edit-area {
             position: absolute;
             top: 0;
@@ -89,6 +89,14 @@
     </div>
 
     <script>
+        let currentStationCode = ''; // Default station code is empty
+        const fallbackMessages = [
+            "Please do not leave luggage or belongings unattended anywhere on this station. Any unattended articles are likely to be removed or destroyed without warning.",
+            "If you see something that looks unusual, speak to station staff or text the British Transport Police on 61016. We'll sort it. See it. Say it. Sorted."
+        ];
+        let currentFallbackIndex = 0;
+        let fallbackInterval;
+
         // Function to update the date and time every second
         function updateDateTime() {
             const now = new Date();
@@ -136,10 +144,11 @@
                 const messageBox = document.getElementById('nrccMessages');
                 
                 if (nrccMessages.length > 0) {
+                    clearInterval(fallbackInterval);
                     let currentIndex = 0;
                     let message = nrccMessages[currentIndex].xhtmlMessage;
 
-                    // Replace 'More details' and everything after it with 'e'
+                    // Replace 'More details' and everything after it with ''
                     const moreDetailsIndex = message.indexOf('More details');
                     if (moreDetailsIndex !== -1) {
                         message = message.substring(0, moreDetailsIndex) + '';
@@ -152,7 +161,7 @@
                             currentIndex = (currentIndex + 1) % nrccMessages.length;
                             let message = nrccMessages[currentIndex].xhtmlMessage;
 
-                            // Replace 'More details' and everything after it with 'e'
+                            // Replace 'More details' and everything after it with ''
                             const moreDetailsIndex = message.indexOf('More details');
                             if (moreDetailsIndex !== -1) {
                                 message = message.substring(0, moreDetailsIndex) + '';
@@ -162,11 +171,21 @@
                         }, 15000); // 15000 milliseconds = 15 seconds
                     }
                 } else {
-                    messageBox.innerHTML = 'For live departure information, call National Rail Enquiries on 03457 48 49 50, or visit nationalrail.co.uk/live-trains';
+                    cycleFallbackMessages();
                 }
             } catch (error) {
-                document.getElementById('nrccMessages').innerHTML = 'For live departure information, call National Rail Enquiries on 03457 48 49 50, or visit nationalrail.co.uk/live-trains';
+                cycleFallbackMessages();
             }
+        }
+
+        // Function to cycle through fallback messages every 15 seconds
+        function cycleFallbackMessages() {
+            const messageBox = document.getElementById('nrccMessages');
+            messageBox.innerHTML = fallbackMessages[currentFallbackIndex];
+            fallbackInterval = setInterval(() => {
+                currentFallbackIndex = (currentFallbackIndex + 1) % fallbackMessages.length;
+                messageBox.innerHTML = fallbackMessages[currentFallbackIndex];
+            }, 15000);
         }
 
         // Function to handle editing text permanently
@@ -183,15 +202,13 @@
             const newStation = prompt('Enter new station name:');
             if (newStation !== null && newStation !== '') {
                 currentStationCode = newStation.trim().toUpperCase();
+                clearInterval(fallbackInterval); // Clear any existing fallback interval
                 fetchNRCCMessages(); // Fetch messages for the new station
             }
         }
 
         // Initial call to update date and time when the page loads
         updateDateTime();
-
-        // Initial call to fetch NRCC messages when the page loads
-        fetchNRCCMessages();
 
         // Update date and time every second
         setInterval(updateDateTime, 1000);
