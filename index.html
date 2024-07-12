@@ -50,24 +50,83 @@
             right: 0%;
             transform: translateX(50.25%);
         }
+        .time-box {
+            position: absolute;
+            font-family: 'Noto Sans', sans-serif;
+            color: white;
+            font-size: 75px;
+            padding: 20px;
+            text-align: center;
+            cursor: default;
+            bottom: 75px; /* 50 pixels from the bottom */
+            left: 100px; /* 50 pixels from the right */
+        }
+        .edit-area {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0); /* Fully transparent */
+            transition: background-color 0.1s ease; /* Smooth transition for background color */
+        }
+        .edit-area:hover {
+            background-color: rgba(255, 255, 255, 0.3); /* Semi-transparent white on hover */
+        }
     </style>
 </head>
 <body>
-    <div class="station-box" id="stationName">
-        CAR Station Notices
+    <div class="edit-area" onclick="changeStationName()">
     </div>
-    <div class="message-box" id="nrccMessages">
+    <div class="station-box" id="stationName" onclick="editText('stationName')">
+        Click to edit station name
+    </div>
+    <div class="message-box" id="nrccMessages" onclick="editText('nrccMessages')">
         Click to edit NRCC messages
+    </div>
+    <div class="time-box" id="currentDateTime">
     </div>
 
     <script>
-        let currentStationCode = 'CAR'; // Default station code is always 'CAR'
+        let currentStationCode = ''; // Default station code is empty
         const fallbackMessages = [
             "Please do not leave luggage or belongings unattended anywhere on this station. Any unattended articles are likely to be removed or destroyed without warning.",
             "If you see something that looks unusual, speak to station staff or text the British Transport Police on 61016. We'll sort it. See it. Say it. Sorted."
         ];
         let currentFallbackIndex = 0;
         let fallbackInterval;
+
+        // Function to update the date and time every second
+        function updateDateTime() {
+            const now = new Date();
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            
+            const dayOfWeek = days[now.getDay()];
+            const dayOfMonth = now.getDate();
+            const month = months[now.getMonth()];
+            const year = now.getFullYear();
+            
+            const ordinalSuffix = getOrdinalSuffix(dayOfMonth); // Function to get the ordinal suffix (st, nd, rd, th)
+            
+            const formattedDate = `${dayOfWeek} ${dayOfMonth}${ordinalSuffix} ${month} ${year}`;
+            
+            document.getElementById('currentDateTime').innerText = formattedDate;
+        }
+
+        // Function to get the ordinal suffix for the day of the month
+        function getOrdinalSuffix(day) {
+            if (day % 10 === 1 && day !== 11) {
+                return 'st';
+            } else if (day % 10 === 2 && day !== 12) {
+                return 'nd';
+            } else if (day % 10 === 3 && day !== 13) {
+                return 'rd';
+            } else {
+                return 'th';
+            }
+        }
 
         // Function to update the NRCC messages
         async function fetchNRCCMessages() {
@@ -129,8 +188,30 @@
             }, 15000);
         }
 
-        // Initial fetch of NRCC messages when the page loads
-        fetchNRCCMessages();
+        // Function to handle editing text permanently
+        function editText(elementId) {
+            const element = document.getElementById(elementId);
+            const newText = prompt('Enter new text:');
+            if (newText !== null && newText !== '') {
+                element.innerText = newText;
+            }
+        }
+
+        // Function to change station name based on user input
+        function changeStationName() {
+            const newStation = prompt('Enter new station name:');
+            if (newStation !== null && newStation !== '') {
+                currentStationCode = newStation.trim().toUpperCase();
+                clearInterval(fallbackInterval); // Clear any existing fallback interval
+                fetchNRCCMessages(); // Fetch messages for the new station
+            }
+        }
+
+        // Initial call to update date and time when the page loads
+        updateDateTime();
+
+        // Update date and time every second
+        setInterval(updateDateTime, 1000);
     </script>
 </body>
 </html>
