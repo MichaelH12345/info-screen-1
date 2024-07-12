@@ -50,17 +50,6 @@
             right: 0%;
             transform: translateX(50.25%);
         }
-        .time-box {
-            position: absolute;
-            font-family: 'Noto Sans', sans-serif;
-            color: white;
-            font-size: 75px;
-            padding: 20px;
-            text-align: center;
-            cursor: default;
-            bottom: 75px; /* 50 pixels from the bottom */
-            left: 100px; /* 50 pixels from the right */
-        }
     </style>
 </head>
 <body>
@@ -69,8 +58,6 @@
     </div>
     <div class="message-box" id="nrccMessages">
         Click to edit NRCC messages
-    </div>
-    <div class="time-box" id="currentDateTime">
     </div>
 
     <script>
@@ -81,18 +68,6 @@
         ];
         let currentFallbackIndex = 0;
         let fallbackInterval;
-
-        // Function to update the date and time every second
-        function updateDateTime() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            
-            const formattedTime = `${hours}:${minutes}:${seconds}`;
-            
-            document.getElementById('currentDateTime').innerText = formattedTime;
-        }
 
         // Function to update the NRCC messages
         async function fetchNRCCMessages() {
@@ -153,12 +128,6 @@
                 messageBox.innerHTML = fallbackMessages[currentFallbackIndex];
             }, 15000);
         }
-
-        // Initial call to update date and time when the page loads
-        updateDateTime();
-
-        // Update date and time every second
-        setInterval(updateDateTime, 1000);
 
         // Initial fetch of NRCC messages when the page loads
         fetchNRCCMessages();
